@@ -26,11 +26,19 @@ class NFARuleBook:
     def rules_for(self, state, character):
         return filter(lambda rule:rule.is_applies_to(state, character), self.rules)
 
+    def follow_free_moves(self, states):
+        more_states = self.next_states(states, None)
+        
+        if more_states.issubset(states) :
+            return states
+        else :
+            return self.follow_free_moves(states.union(more_states))
+
 class NFA:
     def __init__(self, states, accept_states, rule_book):
         self.rule_book = rule_book
-        self.states = states
         self.accept_states = accept_states
+        self.states = rule_book.follow_free_moves(states)
 
     def is_accepting(self):
         for state in self.states:
@@ -41,6 +49,7 @@ class NFA:
     def read_string(self, string):
         for char in string :
             self.states = self.rule_book.next_states(self.states, char)
+
 
 class NFADesign:
     def __init__(self, start_state, accept_states, rule_book):
