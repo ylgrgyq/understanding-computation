@@ -14,7 +14,7 @@ class FARule:
 class NFARuleBook:
     def __init__(self, rules):
         self.rules = rules
-
+    
     def __str__(self):
         return "%s" % (', '.join(r.__str__() for r in self.rules))
 
@@ -49,7 +49,7 @@ class NFA:
     def read_string(self, string):
         for char in string :
             self.states = self.rule_book.next_states(self.states, char)
-
+            self.states = self.rule_book.follow_free_moves(self.states)
 
 class NFADesign:
     def __init__(self, start_state, accept_states, rule_book):
