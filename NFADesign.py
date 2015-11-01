@@ -5,7 +5,7 @@ class FARule:
         self.character = character
         self.next_state = next_state
     def __str__(self):
-        return "%s %s %s" % (self.state, self.character, self.next_state)
+        return "%s --%s--> %s" % (self.state, self.character, self.next_state)
     def follow(self):
         return self.next_state
     def is_applies_to(self, state, character):
@@ -21,7 +21,7 @@ class NFARuleBook:
     def next_states(self, states, character):
         rules = [rule for sublist in map(lambda state: self.rules_for(state, character), states) for rule in sublist]
 
-        return set(map(lambda rule:rule.follow(), rules))
+        return frozenset(map(lambda rule:rule.follow(), rules))
 
     def rules_for(self, state, character):
         return filter(lambda rule:rule.is_applies_to(state, character), self.rules)
@@ -33,6 +33,9 @@ class NFARuleBook:
             return states
         else :
             return self.follow_free_moves(states.union(more_states))
+
+    def alphabet(self):
+        return frozenset(filter(lambda char: char != None, map(lambda rule: rule.character, self.rules)))
 
 class NFA:
     def __init__(self, states, accept_states, rule_book):
@@ -57,8 +60,11 @@ class NFADesign:
         self.accept_states = accept_states
         self.rule_book = rule_book
 
-    def to_nfa(self):
-        return NFA(set([self.start_state]), self.accept_states, self.rule_book)
+    def to_nfa(self, current_states = None):
+        if current_states == None:
+            current_states = [self.start_state]
+
+        return NFA(frozenset(current_states), self.accept_states, self.rule_book)
 
     def is_accepts(self, string):
         nfa = self.to_nfa()
