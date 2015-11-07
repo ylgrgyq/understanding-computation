@@ -1,6 +1,11 @@
 class Stack :
-    def __init__(self):
-        self.content = []
+    def __init__(self, content = []):
+        self.content = content 
+
+    @classmethod
+    def fromList(cls, list):
+        "Initialize Stack from a list"
+        return cls(list)
 
     def push(self, char):
         self.content.append(char)
@@ -10,10 +15,10 @@ class Stack :
             self.content.append(c)
 
     def top(self):
-        return self.content.index(len(self.content))
+        return self.content[-1]
 
     def pop(self):
-        return self.pop()
+        return self.content.pop()
 
     def size(self):
         return len(self.content)
